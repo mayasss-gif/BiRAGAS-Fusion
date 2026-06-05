@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070A14">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<title>BiRAGAS · Fusion Engine · Ayass BioScience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..800;1,9..144,400..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070A14;--bg2:#0C1124;--ink:#EAF0FF;--mut:#8A97B8;--red:#E63946;--gold:#D4A017}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);overflow:hidden;font-family:"DM Mono",ui-monospace,monospace;color:var(--ink)}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+canvas{display:block}
+/* chrome */
+.hdr{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:18px 30px;z-index:10;pointer-events:none}
+.brand{font-family:"Fraunces";font-style:italic;font-weight:700;font-size:30px;letter-spacing:-0.01em}
+.brand .dot{color:var(--red)}
+.brand .sub{font-family:"DM Mono";font-style:normal;font-size:12px;letter-spacing:0.3em;color:var(--mut);text-transform:uppercase;margin-left:14px}
+.hdr .meta{font-size:11px;letter-spacing:0.26em;color:var(--mut);text-transform:uppercase;text-align:right;line-height:1.7}
+.cap{position:fixed;left:0;right:0;bottom:64px;text-align:center;z-index:10;pointer-events:none}
+.cap .phase{font-family:"DM Mono";font-size:13px;letter-spacing:0.34em;text-transform:uppercase;color:var(--red);margin-bottom:8px;transition:color .3s}
+.cap .desc{font-family:"Fraunces";font-style:italic;font-weight:500;font-size:clamp(20px,2.6vw,40px);color:var(--ink);max-width:1100px;margin:0 auto;padding:0 24px;line-height:1.2}
+.ftr{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:14px 30px;z-index:10;font-size:11px;letter-spacing:0.22em;color:var(--mut);text-transform:uppercase}
+.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;pointer-events:none}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.ctrl{display:flex;gap:10px;pointer-events:auto}
+.ctrl button{font-family:"DM Mono";font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);padding:8px 14px;cursor:pointer;border-radius:4px;transition:all .16s}
+.ctrl button:hover{background:var(--red);border-color:var(--red)}
+.ctrl button.on{background:var(--red);border-color:var(--red)}
+@media(max-width:760px){.hdr .meta{display:none}.brand .sub{display:none}.legend{display:none}.cap{bottom:88px}}
+</style></head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div class="hdr">
+  <div class="brand">BiRAGAS<span class="dot">.</span><span class="sub">Fusion Engine</span></div>
+  <div class="meta">23 MODULES · 7 PHASES · 1 ORCHESTRATOR<br>The causal operating system for drug discovery</div>
+</div>
+<div class="cap"><div class="phase" id="capPhase">Initializing the fusion engine…</div><div class="desc" id="capDesc">One orchestrator. Twenty-three specialized modules. Fused into a single causal pipeline.</div></div>
+<div class="ftr">
+  <div class="legend" id="legend"></div>
+  <div class="ctrl">
+    <button id="narrate">🔊 Narrate</button>
+    <button id="pause">❚❚ Pause</button>
+    <button id="restart">↻ Restart</button>
+  </div>
+</div>
+<audio id="vo" preload="auto" src="fusion_narration.mp3"></audio>
+<script>
+// ---------------- DATA: 23 modules across 7 phases ----------------
+const PAL = ["#E63946","#D4A017","#4C8DFF","#19C3B2","#A78BFA","#46D17F","#FF8A4C"];
+const PHASES = [
+ {id:1,name:"Causality Foundation",color:PAL[0],desc:"DAGBuilder fuses 9 evidence streams into one directed causal graph; MRValidator anchors it with genetic proof.",mods:[
+   {k:"DAGBuilder",d:"Builds the causal DAG from 9 streams"},
+   {k:"MRValidator",d:"Mendelian-randomization anchor"}]},
+ {id:2,name:"Network Importance",color:PAL[1],desc:"Centrality and scoring rank every gene — master regulator, secondary driver, or effector.",mods:[
+   {k:"CentralityCalculator",d:"Ranks causal importance"},
+   {k:"TargetScorer",d:"Initial target weighting"}]},
+ {id:3,name:"Causal Calculus",color:PAL[2],desc:"Five engines test causality, direction, confounding and counterfactuals, then propagate effects across the DAG.",mods:[
+   {k:"CausalityTester",d:"Tests edge causality"},
+   {k:"DirectionalityTester",d:"5-method direction"},
+   {k:"ConfoundingChecker",d:"Removes confounds"},
+   {k:"CounterfactualSimulator",d:"do-calculus interventions"},
+   {k:"DAGPropagationEngine",d:"Propagates effects"}]},
+ {id:4,name:"Perturbation & Resistance",color:PAL[3],desc:"CRISPR-grounded modules map resistance and compensation pathways before a target is ever ranked.",mods:[
+   {k:"ResistanceMechanismIdentifier",d:"Finds escape routes"},
+   {k:"CompensationPathwayAnalyzer",d:"Maps bypass pathways"}]},
+ {id:5,name:"Pharma Intervention",color:PAL[4],desc:"Targets are ranked, drugged, predicted for efficacy, safety-gated, and tested in combination.",mods:[
+   {k:"TargetRanker",d:"Final causal ranking"},
+   {k:"DruggabilityScorer",d:"Druggability"},
+   {k:"EfficacyPredictor",d:"Predicts efficacy"},
+   {k:"SafetyAssessor",d:"Essentiality safety gate"},
+   {k:"CombinationAnalyzer",d:"Synergy / epistasis"}]},
+ {id:6,name:"Stratification & Comparative",color:PAL[5],desc:"Per-patient DAGs stratify cohorts; comparison and conserved motifs separate signal from noise.",mods:[
+   {k:"CohortStratifier",d:"N=1 patient DAGs"},
+   {k:"DAGComparator",d:"Cross-cohort compare"},
+   {k:"ConservedMotifsIdentifier",d:"Conserved causal motifs"}]},
+ {id:7,name:"Inspection & Output",color:PAL[6],desc:"Evidence is audited, gaps flagged, disagreements arbitrated, and a validated, traceable dossier is emitted.",mods:[
+   {k:"EvidenceInspector",d:"Audits every claim"},
+   {k:"GapAnalyzer",d:"Flags missing evidence"},
+   {k:"LLMArbitrator",d:"Resolves disagreements"},
+   {k:"ResponseFormatter",d:"Emits target dossier"}]},
+];
+const FEEDERS=[
+ {k:"CRISPR ENGINE",d:"88.9B perturbation predictions",col:"#FF8A4C"},
+ {k:"Bio-RAG",d:"8.6M grounded facts",col:"#19C3B2"},
+ {k:"9 EVIDENCE STREAMS",d:"MR · GWAS · CRISPR · SIGNOR…",col:"#4C8DFF"},
+];
+
+// ---------------- canvas setup ----------------
+const cv=document.getElementById("c"), ctx=cv.getContext("2d");
+const BW=1920, BH=1080; let scale=1, ox=0, oy=0;
+function resize(){
+  const w=window.innerWidth, h=window.innerHeight;
+  scale=Math.min(w/BW,h/BH); ox=(w-BW*scale)/2; oy=(h-BH*scale)/2;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=w*dpr; cv.height=h*dpr; cv.style.width=w+"px"; cv.style.height=h+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize",resize); resize();
+function T(x,y){return [ox+x*scale, oy+y*scale];}  // board->screen
+function S(v){return v*scale;}
+
+// ---------------- layout ----------------
+const CX=960, CY=556, R=372;
+// flatten modules with ring angles, grouped by phase with gaps
+let MODS=[]; { const total=PHASES.reduce((a,p)=>a+p.mods.length,0);
+  const gap=0.045; // fraction gap between phase groups
+  const usable=1 - gap*PHASES.length;
+  let acc=-0.25; // start near top
+  PHASES.forEach((ph,pi)=>{
+    const span=usable*(ph.mods.length/total);
+    ph.mods.forEach((m,mi)=>{
+      const f=acc + span*((mi+0.5)/ph.mods.length);
+      const ang=f*Math.PI*2 - Math.PI/2;
+      MODS.push({...m,phase:pi,color:ph.color,ang,x:CX+Math.cos(ang)*R,y:CY+Math.sin(ang)*R});
+    });
+    acc+=span+gap;
+  });
+}
+// feeders at top
+FEEDERS.forEach((f,i)=>{ const fx=CX+(i-1)*430; f.x=fx; f.y=150; });
+
+// edges: spokes (center<->mod), sequential fusion (mod[i] of phase p -> mods of phase p+1), and a few cross chords
+const seqEdges=[];
+for(let p=0;p<PHASES.length-1;p++){
+  const a=MODS.filter(m=>m.phase===p), b=MODS.filter(m=>m.phase===p+1);
+  a.forEach(m=>{ const tgt=b[(a.indexOf(m))%b.length]; seqEdges.push([m,tgt]); });
+}
+// fusion chords (cross-phase grounding) - CRISPR/evidence weaving
+const chordPairs=[[0,9],[1,11],[4,19],[8,15],[6,18],[12,20]].map(([i,j])=>[MODS[i],MODS[j]]);
+
+// ---------------- particles ----------------
+let parts=[];
+function spawn(ax,ay,bx,by,col,speed,size){ parts.push({ax,ay,bx,by,col,t:0,sp:speed||0.018,sz:size||2.4}); }
+function curveMid(ax,ay,bx,by,k){ const mx=(ax+bx)/2,my=(ay+by)/2; const dx=bx-ax,dy=by-ay; return [mx-dy*k, my+dx*k]; }
+
+// ---------------- timeline ----------------
+const LOOP=27000; // ms
+let startT=performance.now(), paused=false, pauseAt=0;
+const capPhase=document.getElementById("capPhase"), capDesc=document.getElementById("capDesc");
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+
+// build legend
+document.getElementById("legend").innerHTML = PHASES.map(p=>`<span><i style="background:${p.color}"></i>${p.id} ${p.name}</span>`).join("");
+
+let lastPhaseShown=-2;
+function draw(now){
+  const t = paused ? pauseAt : (now-startT);
+  const p = (t % LOOP)/LOOP;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // bg vignette
+  const g=ctx.createRadialGradient(...T(CX,CY),0,...T(CX,CY),S(900));
+  g.addColorStop(0,"#0C1430"); g.addColorStop(1,"#070A14");
+  ctx.fillStyle=g; ctx.fillRect(0,0,cv.width,cv.height);
+
+  // timeline stages
+  const introEnd=0.07, sweepStart=0.07, sweepEnd=0.80, convEnd=0.93;
+  const intro=clamp(p/introEnd,0,1);
+  // which phases active
+  let activeP=-1, phaseLocal=0;
+  if(p>=sweepStart && p<sweepEnd){ const sp=(p-sweepStart)/(sweepEnd-sweepStart); activeP=Math.floor(sp*PHASES.length); phaseLocal=(sp*PHASES.length)%1; }
+  const converging = p>=sweepEnd && p<convEnd;
+  const convT = converging? (p-sweepEnd)/(convEnd-sweepEnd):0;
+  const done = p>=convEnd;
+  const seam = done? clamp((p-convEnd)/(1-convEnd),0,1):0; // fade for loop seam
+
+  const globalAlpha = (1-seam)* (0.2+0.8*intro);
+  ctx.globalAlpha=1;
+
+  // activation level per module
+  function actOf(m){
+    if(m.phase<activeP || converging || done) return 1;
+    if(m.phase===activeP) return ease(clamp(phaseLocal*1.6,0,1));
+    return 0.0;
+  }
+
+  // ---- draw spokes ----
+  MODS.forEach(m=>{
+    const a=actOf(m);
+    const [x1,y1]=T(CX,CY),[x2,y2]=T(m.x,m.y);
+    ctx.strokeStyle=`rgba(140,160,210,${0.05+0.18*a})`; ctx.lineWidth=S(1+1.5*a);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  });
+  // ---- sequential fusion arcs ----
+  seqEdges.forEach(([a,b])=>{
+    const act=(actOf(a)>0.4 && (b.phase<=activeP||converging||done))?1:0;
+    const [mx,my]=curveMid(a.x,a.y,b.x,b.y,0.22);
+    const [ax,ay]=T(a.x,a.y),[bx,by]=T(b.x,b.y),[cx,cy]=T(mx,my);
+    ctx.strokeStyle=`rgba(180,200,255,${0.04+0.16*act})`; ctx.lineWidth=S(1.2);
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.quadraticCurveTo(cx,cy,bx,by);ctx.stroke();
+  });
+  // ---- fusion chords (always faintly weaving) ----
+  chordPairs.forEach(([a,b])=>{
+    const [mx,my]=curveMid(a.x,a.y,b.x,b.y,-0.05);
+    const [ax,ay]=T(a.x,a.y),[bx,by]=T(b.x,b.y),[cx,cy]=T(mx,my);
+    const w=0.05+0.12*Math.abs(Math.sin(t/900+a.ang));
+    ctx.strokeStyle=`rgba(255,138,76,${w*(intro)})`; ctx.lineWidth=S(1);
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.quadraticCurveTo(cx,cy,bx,by);ctx.stroke();
+  });
+
+  // ---- feeders -> center (grounding) ----
+  FEEDERS.forEach(f=>{
+    const [fx,fy]=T(f.x,f.y),[cx,cy]=T(CX,CY);
+    ctx.strokeStyle=`rgba(120,160,220,${0.10*intro})`; ctx.lineWidth=S(1.2);
+    ctx.beginPath();ctx.moveTo(fx,fy);ctx.lineTo(cx,cy);ctx.stroke();
+    // node
+    ctx.fillStyle=f.col; ctx.globalAlpha=intro; ctx.beginPath();ctx.arc(fx,fy,S(7),0,7);ctx.fill();
+    ctx.globalAlpha=1;
+    ctx.fillStyle="rgba(234,240,255,"+(0.9*intro)+")"; ctx.font=`${S(15)}px "DM Mono",monospace`; ctx.textAlign="center";
+    ctx.fillText(f.k, fx, fy-S(16));
+    ctx.fillStyle="rgba(138,151,184,"+(0.8*intro)+")"; ctx.font=`${S(12)}px "DM Mono",monospace`;
+    ctx.fillText(f.d, fx, fy+S(24));
+  });
+
+  // ---- spawn particles ----
+  if(!paused){
+    // feeders constantly feed center
+    if(Math.random()<0.5*intro) {const f=FEEDERS[Math.floor(Math.random()*3)]; spawn(f.x,f.y,CX,CY,f.col,0.02,2.2);}
+    // center -> active phase nodes
+    if(activeP>=0){ MODS.filter(m=>m.phase===activeP).forEach(m=>{ if(Math.random()<0.5) spawn(CX,CY,m.x,m.y,m.color,0.022,2.8); }); }
+    // sequential hand-off
+    if(activeP>0){ seqEdges.forEach(([a,b])=>{ if(b.phase===activeP && Math.random()<0.15) spawn(a.x,a.y,b.x,b.y,b.color,0.02,2.4); }); }
+    // convergence: all nodes -> center
+    if(converging && Math.random()<0.9){ const m=MODS[Math.floor(Math.random()*MODS.length)]; spawn(m.x,m.y,CX,CY,"#FFE08A",0.03,3.2); }
+  }
+  // update+draw particles
+  parts=parts.filter(pt=>pt.t<1);
+  parts.forEach(pt=>{ if(!paused) pt.t+=pt.sp; const x=pt.ax+(pt.bx-pt.ax)*pt.t, y=pt.ay+(pt.by-pt.ay)*pt.t; const [sx,sy]=T(x,y);
+    ctx.fillStyle=pt.col; ctx.globalAlpha=Math.sin(pt.t*Math.PI); ctx.beginPath();ctx.arc(sx,sy,S(pt.sz),0,7);ctx.fill(); ctx.globalAlpha=1; });
+
+  // ---- module nodes ----
+  MODS.forEach(m=>{
+    const a=actOf(m); const [x,y]=T(m.x,m.y);
+    const rr=S(8+5*a);
+    // glow
+    if(a>0){ const gg=ctx.createRadialGradient(x,y,0,x,y,S(34)); gg.addColorStop(0,m.color+"cc"); gg.addColorStop(1,m.color+"00"); ctx.globalAlpha=0.5*a; ctx.fillStyle=gg; ctx.beginPath();ctx.arc(x,y,S(34),0,7);ctx.fill(); ctx.globalAlpha=1;}
+    ctx.fillStyle = a>0? m.color : "rgba(120,135,170,0.5)"; ctx.beginPath();ctx.arc(x,y,rr,0,7);ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,"+(0.25+0.5*a)+")"; ctx.lineWidth=S(1.4); ctx.stroke();
+    // radial label
+    ctx.save(); ctx.translate(x,y);
+    let ang=m.ang, flip=Math.cos(ang)<0;
+    ctx.rotate(ang + (flip?Math.PI:0));
+    ctx.textAlign=flip?"right":"left"; ctx.textBaseline="middle";
+    const lx=flip?-(rr+S(8)):(rr+S(8));
+    ctx.font=`${S(14)}px "DM Mono",monospace`;
+    ctx.fillStyle=`rgba(234,240,255,${0.45+0.55*a})`;
+    ctx.fillText(m.k, lx, 0);
+    ctx.restore();
+  });
+
+  // ---- self-corrector ring (pulse at each phase boundary) ----
+  if(activeP>=0){ const pr=phaseLocal; if(pr<0.5){ const rad=S(60+pr*520); ctx.strokeStyle=`rgba(255,224,138,${0.25*(1-pr*2)})`; ctx.lineWidth=S(2); const[cx,cy]=T(CX,CY); ctx.beginPath();ctx.arc(cx,cy,rad,0,7);ctx.stroke(); } }
+
+  // ---- orchestrator core ----
+  const [cx,cy]=T(CX,CY);
+  const pulse=1+0.06*Math.sin(t/420);
+  const coreGlow=ctx.createRadialGradient(cx,cy,0,cx,cy,S(120));
+  coreGlow.addColorStop(0,"rgba(230,57,70,0.55)"); coreGlow.addColorStop(0.5,"rgba(230,57,70,0.12)"); coreGlow.addColorStop(1,"rgba(230,57,70,0)");
+  ctx.globalAlpha=intro; ctx.fillStyle=coreGlow; ctx.beginPath();ctx.arc(cx,cy,S(120),0,7);ctx.fill();
+  ctx.fillStyle="#0C1124"; ctx.strokeStyle="#E63946"; ctx.lineWidth=S(2.5);
+  ctx.beginPath();ctx.arc(cx,cy,S(56*pulse),0,7);ctx.fill();ctx.stroke();
+  ctx.fillStyle="#EAF0FF"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.font=`700 ${S(18)}px "DM Mono",monospace`; ctx.fillText("MASTER", cx, cy-S(11));
+  ctx.fillText("ORCHESTRATOR", cx, cy+S(11));
+  ctx.font=`${S(11)}px "DM Mono",monospace`; ctx.fillStyle="#8A97B8"; ctx.fillText("SelfCorrector ×7 · LearningEngine", cx, cy+S(34));
+
+  // ---- convergence output ----
+  if(converging||done){
+    const o=converging?ease(convT):1;
+    const oy2=cy+S(150);
+    ctx.globalAlpha=o*(1-seam);
+    ctx.fillStyle="#FFE08A"; ctx.font=`700 ${S(40)}px "Fraunces",serif`; ctx.fontStyle="italic";
+    ctx.fillText("< 10 VALIDATED TARGETS", cx, oy2);
+    ctx.fillStyle="#8A97B8"; ctx.font=`${S(16)}px "DM Mono",monospace`;
+    ctx.fillText("each with causal evidence · CCS ≥ 0.8 · PSI · safety-gated · traceable", cx, oy2+S(34));
+    ctx.globalAlpha=1;
+  }
+
+  // ---- caption update ----
+  let capP, capD;
+  if(p<introEnd){ capP="Initializing the fusion engine"; capD="One orchestrator. Twenty-three specialized modules. Fused into a single causal pipeline."; }
+  else if(converging){ capP="Fusion → Convergence"; capD="Every module's evidence converges — ~20,000 genes become fewer than ten validated targets."; }
+  else if(done){ capP="A new infrastructure for drug discovery"; capD="Not one algorithm — the fusion of all twenty-three, grounded in real perturbation evidence."; }
+  else if(activeP>=0){ capP=`Phase ${PHASES[activeP].id} · ${PHASES[activeP].name}`; capD=PHASES[activeP].desc; }
+  if(capP!==lastPhaseShown){ capPhase.textContent=capP; capDesc.textContent=capD; capPhase.style.color = (activeP>=0&&!converging&&!done)?PHASES[activeP].color:"#E63946"; lastPhaseShown=capP; }
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ---------------- controls ----------------
+const pauseBtn=document.getElementById("pause");
+pauseBtn.onclick=()=>{ if(!paused){ pauseAt=performance.now()-startT; paused=true; pauseBtn.textContent="▶ Play"; } else { startT=performance.now()-pauseAt; paused=false; pauseBtn.textContent="❚❚ Pause"; } };
+document.getElementById("restart").onclick=()=>{ startT=performance.now(); paused=false; pauseBtn.textContent="❚❚ Pause"; const vo=document.getElementById("vo"); if(!vo.paused){vo.currentTime=0;} };
+const vo=document.getElementById("vo"), nb=document.getElementById("narrate");
+nb.onclick=()=>{ if(vo.paused){ startT=performance.now(); vo.currentTime=0; vo.play().then(()=>{nb.classList.add("on");nb.textContent="❚❚ Narrating";}).catch(()=>{}); } else { vo.pause(); nb.classList.remove("on"); nb.textContent="🔊 Narrate"; } };
+vo.addEventListener("ended",()=>{nb.classList.remove("on");nb.textContent="🔊 Narrate";});
+</script>
+</body></html>
