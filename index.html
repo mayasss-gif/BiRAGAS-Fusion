@@ -20,11 +20,12 @@ canvas{display:block}
 .brand .dot{color:var(--red)}
 .brand .sub{font-family:"DM Mono";font-style:normal;font-size:12px;letter-spacing:0.3em;color:var(--mut);text-transform:uppercase;margin-left:14px}
 .hdr .meta{font-size:11px;letter-spacing:0.26em;color:var(--mut);text-transform:uppercase;text-align:right;line-height:1.7}
-.cap{position:fixed;left:0;right:0;bottom:64px;text-align:center;z-index:10;pointer-events:none}
+.cap{position:fixed;left:0;right:0;bottom:84px;text-align:center;z-index:10;pointer-events:none}
 .cap .phase{font-family:"DM Mono";font-size:13px;letter-spacing:0.34em;text-transform:uppercase;color:var(--red);margin-bottom:8px;transition:color .3s}
 .cap .desc{font-family:"Fraunces";font-style:italic;font-weight:500;font-size:clamp(20px,2.6vw,40px);color:var(--ink);max-width:1100px;margin:0 auto;padding:0 24px;line-height:1.2}
 .ftr{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:14px 30px;z-index:10;font-size:11px;letter-spacing:0.22em;color:var(--mut);text-transform:uppercase}
-.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;pointer-events:none}
+.legend{display:flex;gap:13px;flex-wrap:nowrap;align-items:center;pointer-events:none;font-size:10px;letter-spacing:0.12em;max-width:60%;overflow:hidden}
+.legend span{white-space:nowrap}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .ctrl{display:flex;gap:10px;pointer-events:auto;justify-content:flex-end}
 .ctrl button,.ctrl .navlink{font-family:"DM Mono";font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);padding:8px 14px;cursor:pointer;border-radius:4px;transition:all .16s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
@@ -150,7 +151,8 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
 
 // build legend
-document.getElementById("legend").innerHTML = PHASES.map(p=>`<span><i style="background:${p.color}"></i>${p.id} ${p.name}</span>`).join("");
+const SHORT=["Foundation","Importance","Causal Calculus","Perturbation","Pharma","Stratify","Inspection"];
+document.getElementById("legend").innerHTML = PHASES.map(p=>`<span><i style="background:${p.color}"></i>${p.id} ${SHORT[p.id-1]}</span>`).join("");
 
 let lastPhaseShown=-2;
 function draw(now){
