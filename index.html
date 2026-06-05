@@ -47,8 +47,6 @@ canvas{display:block}
   <div class="legend" id="legend"></div>
   <div class="ctrl">
     <button id="narrate">🔊 Narrate</button>
-    <button id="pause">❚❚ Pause</button>
-    <button id="restart">↻ Restart</button>
     <a class="navlink" href="https://mayasss-gif.github.io/BiRAGAS-Explainer/" target="_blank" rel="noopener">Explainer →</a>
     <a class="navlink" href="https://mayasss-gif.github.io/BiRAGAS-Investor-Briefing/" target="_blank" rel="noopener">Full deck →</a>
   </div>
@@ -300,9 +298,6 @@ function draw(now){
 requestAnimationFrame(draw);
 
 // ---------------- controls ----------------
-const pauseBtn=document.getElementById("pause");
-pauseBtn.onclick=()=>{ if(!paused){ pauseAt=performance.now()-startT; paused=true; pauseBtn.textContent="▶ Play"; } else { startT=performance.now()-pauseAt; paused=false; pauseBtn.textContent="❚❚ Pause"; } };
-document.getElementById("restart").onclick=()=>{ startT=performance.now(); paused=false; pauseBtn.textContent="❚❚ Pause"; const vo=document.getElementById("vo"); if(!vo.paused){vo.currentTime=0;} };
 const vo=document.getElementById("vo"), nb=document.getElementById("narrate");
 nb.onclick=()=>{ if(vo.paused){ startT=performance.now(); vo.currentTime=0; vo.play().then(()=>{nb.classList.add("on");nb.textContent="❚❚ Narrating";}).catch(()=>{}); } else { vo.pause(); nb.classList.remove("on"); nb.textContent="🔊 Narrate"; } };
 vo.addEventListener("ended",()=>{nb.classList.remove("on");nb.textContent="🔊 Narrate";});
